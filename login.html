@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complaint Management Portal</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #eaf2f8;
+            color: #10213b;
+            min-height: 100vh;
+        }
+
+        header {
+            background: #101a30;
+            color: white;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .header-title {
+            font-size: 26px;
+            font-weight: bold;
+        }
+
+        nav {
+            display: flex;
+            gap: 15px;
+        }
+
+        nav button {
+            padding: 12px 22px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 17px;
+            transition: all 0.2s;
+        }
+
+        .active {
+            background: #0d9488;
+            color: white;
+        }
+
+        .inactive {
+            background: transparent;
+            color: #aab7c9;
+            border: 1px solid transparent;
+        }
+
+        .inactive:hover {
+            color: white;
+            border-color: #334155;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 590px;
+            background: white;
+            margin: 35px auto;
+            padding: 30px 25px;
+            border-radius: 18px;
+            box-shadow: 0 5px 20px #0001;
+        }
+
+        .roles {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 22px;
+        }
+
+        .roles button {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #d5e0ee;
+            background: white;
+            color: #0d9488;
+            border-radius: 9px;
+            font-size: 17px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+
+        .roles button:hover {
+            background: #f0fdfa;
+        }
+
+        .roles button.selected {
+            background: #0d9488;
+            color: white;
+            border-color: #0d9488;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            font-size: 17px;
+            margin: 18px 0 9px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 15px;
+            border: 1px solid #d5e0ee;
+            border-radius: 10px;
+            font-size: 16px;
+            background: #f8fafc;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input:focus, select:focus {
+            border-color: #0d9488;
+            background: #ffffff;
+        }
+
+        .forgot {
+            text-align: right;
+            margin: 12px 0 28px;
+        }
+
+        .forgot a {
+            color: #0d9488;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .forgot a:hover {
+            text-decoration: underline;
+        }
+
+        .submit {
+            width: 100%;
+            padding: 16px;
+            background: #0d9488;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .submit:hover {
+            background: #0f766e;
+        }
+
+        .submit:disabled {
+            background: #94a3b8;
+            cursor: not-allowed;
+        }
+
+        .register {
+            margin-top: 22px;
+            text-align: center;
+        }
+
+        .register button {
+            width: 100%;
+            padding: 14px;
+            margin-top: 10px;
+            background: white;
+            color: #0d9488;
+            border: 1px solid #d5e0ee;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .register button:hover {
+            background: #f0fdfa;
+        }
+
+        #message {
+            margin-top: 15px;
+            text-align: center;
+            color: #0d9488;
+            min-height: 22px;
+            font-weight: 500;
+        }
+
+        .msg-error {
+            color: #e11d48 !important;
+        }
+
+        .msg-success {
+            color: #0d9488 !important;
+        }
+
+        .extra-links {
+            text-align: center;
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px dashed #e2e8f0;
+        }
+
+        .extra-links a {
+            color: #0d9488;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 15px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .extra-links a:hover {
+            text-decoration: underline;
+        }
+
+        [dir="rtl"] {
+            text-align: right;
+        }
+        [dir="rtl"] .forgot {
+            text-align: left;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <div class="header-title" data-i18n="title">
+        Complaint Portal
+    </div>
+
+    <nav>
+        <button class="active" id="navSignIn" data-i18n="signIn">Sign in</button>
+        <button class="inactive" id="navRegister" data-i18n="register">Register</button>
+    </nav>
+</header>
+
+<div class="container">
+
+    <div class="roles" id="rolesGroup">
+        <button type="button" class="selected" data-role="user" data-i18n="user">User</button>
+        <button type="button" data-role="admin" data-i18n="admin">Admin</button>
+        <button type="button" data-role="officer" data-i18n="officer">Officer</button>
+    </div>
+
+    <label data-i18n="language" for="language">Preferred language</label>
+
+    <select id="language">
+        <option value="en">English</option>
+        <option value="te">తెలుగు</option>
+        <option value="hi">हिन्दी</option>
+        <option value="ta">தமிழ்</option>
+        <option value="kn">ಕನ್ನಡ</option>
+        <option value="ml">മലയാളം</option>
+        <option value="mr">मराठी</option>
+        <option value="bn">বাংলা</option>
+        <option value="gu">ગુજરાતી</option>
+        <option value="ur">اردو</option>
+    </select>
+
+    <form id="loginForm">
+
+        <label data-i18n="email" for="email">Email</label>
+        <input type="email" id="email"
+            data-placeholder="emailPlaceholder"
+            placeholder="Enter your email" required value="user@demo.in">
+
+        <label data-i18n="password" for="password">Password</label>
+        <input type="password" id="password"
+            data-placeholder="passwordPlaceholder"
+            placeholder="Enter your password" required value="demo">
+
+        <div class="forgot">
+            <a href="javascript:void(0)" id="forgotBtn" data-i18n="forgot">Forgot password?</a>
+        </div>
+
+        <button type="submit" class="submit" id="submitBtn"
+            data-i18n="signIn">
+            Sign in
+        </button>
+
+    </form>
+
+    <div class="register">
+        <p data-i18n="newUser">New user?</p>
+        <button type="button" id="registerBtn" data-i18n="register">Register</button>
+    </div>
+
+    <p id="message"></p>
+
+
+
+</div>
+
+<script>
+
+// TRANSLATION DATA
+
+const translations = {
+
+    en: {
+        title: "Complaint Portal",
+        signIn: "Sign in",
+        register: "Register",
+        user: "User",
+        admin: "Admin",
+        officer: "Officer",
+        language: "Preferred language",
+        email: "Email",
+        password: "Password",
+        forgot: "Forgot password?",
+        newUser: "New user?",
+        emailPlaceholder: "Enter your email",
+        passwordPlaceholder: "Enter your password",
+        success: "Language changed successfully!",
+        signingIn: "Signing in...",
+        loginSuccess: "Signed in successfully!",
+        loginError: "Email or password is incorrect. Check both and try again."
+    },
+
+    te: {
+        title: "ఫిర్యాదుల పోర్టల్",
+        signIn: "సైన్ ఇన్",
+        register: "నమోదు",
+        user: "వినియోగదారు",
+        admin: "అడ్మిన్",
+        officer: "అధికారి",
+        language: "ఇష్టమైన భాష",
+        email: "ఇమెయిల్",
+        password: "పాస్వర్డ్",
+        forgot: "పాస్వర్డ్ మర్చిపోయారా?",
+        newUser: "కొత్త వినియోగదారుడా?",
+        emailPlaceholder: "మీ ఇమెయిల్ నమోదు చేయండి",
+        passwordPlaceholder: "మీ పాస్వర్డ్ నమోదు చేయండి",
+        success: "భాష విజయవంతంగా మార్చబడింది!",
+        signingIn: "సైన్ ఇన్ అవుతోంది...",
+        loginSuccess: "విజయవంతంగా సైన్ ఇన్ అయ్యారు!",
+        loginError: "ఇమెయిల్ లేదా పాస్‌వర్డ్ తప్పు."
+    },
+
+    hi: {
+        title: "शिकायत पोर्टल",
+        signIn: "साइन इन करें",
+        register: "रजिस्टर करें",
+        user: "उपयोगकर्ता",
+        admin: "एडमिन",
+        officer: "अधिकारी",
+        language: "पसंदीदा भाषा",
+        email: "ईमेल",
+        password: "पासवर्ड",
+        forgot: "पासवर्ड भूल गए?",
+        newUser: "नए उपयोगकर्ता?",
+        emailPlaceholder: "अपना ईमेल दर्ज करें",
+        passwordPlaceholder: "अपना पासवर्ड दर्ज करें",
+        success: "भाषा सफलतापूर्वक बदल दी गई!",
+        signingIn: "साइन इन हो रहा है...",
+        loginSuccess: "सफलतापूर्वक साइन इन किया गया!",
+        loginError: "ईमेल या पासवर्ड गलत है।"
+    },
+
+    ta: {
+        title: "புகார் போர்டல்",
+        signIn: "உள்நுழைய",
+        register: "பதிவு செய்ய",
+        user: "பயனர்",
+        admin: "நிர்வாகி",
+        officer: "அதிகாரி",
+        language: "விருப்பமான மொழி",
+        email: "மின்னஞ்சல்",
+        password: "கடவுச்சொல்",
+        forgot: "கடவுச்சொல்லை மறந்துவிட்டீர்களா?",
+        newUser: "புதிய பயனரா?",
+        emailPlaceholder: "உங்கள் மின்னஞ்சலை உள்ளிடவும்",
+        passwordPlaceholder: "உங்கள் கடவுச்சொல்லை உள்ளிடவும்",
+        success: "மொழி வெற்றிகரமாக மாற்றப்பட்டது!",
+        signingIn: "உள்நுழைகிறது...",
+        loginSuccess: "வெற்றிகரமாக உள்நுழைந்தது!",
+        loginError: "மின்னஞ்சல் அல்லது கடவுச்சொல் தவறானது."
+    },
+
+    kn: {
+        title: "ದೂರು ಪೋರ್ಟಲ್",
+        signIn: "ಸೈನ್ ಇನ್",
+        register: "ನೋಂದಣಿ",
+        user: "ಬಳಕೆದಾರ",
+        admin: "ನಿರ್ವಾಹಕ",
+        officer: "ಅಧಿಕಾರಿ",
+        language: "ಆದ್ಯತೆಯ ಭಾಷೆ",
+        email: "ಇಮೇಲ್",
+        password: "ಪಾಸ್ವರ್ಡ್",
+        forgot: "ಪಾಸ್ವರ್ಡ್ ಮರೆತಿರುವಿರಾ?",
+        newUser: "ಹೊಸ ಬಳಕೆದಾರರೇ?",
+        emailPlaceholder: "ನಿಮ್ಮ ಇಮೇಲ್ ನಮೂದಿಸಿ",
+        passwordPlaceholder: "ನಿಮ್ಮ ಪಾಸ್ವರ್ಡ್ ನಮೂದಿಸಿ",
+        success: "ಭಾಷೆಯನ್ನು ಯಶಸ್ವಿಯಾಗಿ ಬದಲಾಯಿಸಲಾಗಿದೆ!",
+        signingIn: "ಸೈನ್ ಇನ್ ಮಾಡಲಾಗುತ್ತಿದೆ...",
+        loginSuccess: "ಯಶಸ್ವಿಯಾಗಿ ಸೈನ್ ಇನ್ ಆಗಿದೆ!",
+        loginError: "ಇಮೇಲ್ ಅಥವಾ ಪಾಸ್‌ವರ್ಡ್ ತಪ್ಪಾಗಿದೆ."
+    },
+
+    ml: {
+        title: "പരാതി പോർട്ടൽ",
+        signIn: "സൈൻ ഇൻ",
+        register: "രജിസ്റ്റർ ചെയ്യുക",
+        user: "ഉപയോക്താവ്",
+        admin: "അഡ്മിൻ",
+        officer: "ഉദ്യോഗസ്ഥൻ",
+        language: "ഇഷ്ടമുള്ള ഭാഷ",
+        email: "ഇമെയിൽ",
+        password: "പാസ്വേഡ്",
+        forgot: "പാസ്വേഡ് മറന്നോ?",
+        newUser: "പുതിയ ഉപയോക്താവാണോ?",
+        emailPlaceholder: "നിങ്ങളുടെ ഇമെയിൽ നൽകുക",
+        passwordPlaceholder: "നിങ്ങളുടെ പാസ്വേഡ് നൽകുക",
+        success: "ഭാഷ വിജയകരമായി മാറ്റി!",
+        signingIn: "സൈൻ ഇൻ ചെയ്യുന്നു...",
+        loginSuccess: "വിജയകരമായി സൈൻ ഇൻ ചെയ്തു!",
+        loginError: "ഇമെയിൽ അല്ലെങ്കിൽ പാസ്‌വേഡ് തെറ്റാണ്."
+    },
+
+    mr: {
+        title: "तक्रार पोर्टल",
+        signIn: "साइन इन",
+        register: "नोंदणी करा",
+        user: "वापरकर्ता",
+        admin: "प्रशासक",
+        officer: "अधिकारी",
+        language: "आवडती भाषा",
+        email: "ईमेल",
+        password: "पासवर्ड",
+        forgot: "पासवर्ड विसरलात?",
+        newUser: "नवीन वापरकर्ता?",
+        emailPlaceholder: "तुमचा ईमेल टाका",
+        passwordPlaceholder: "तुमचा पासवर्ड टाका",
+        success: "भाषा यशस्वीरित्या बदलली!",
+        signingIn: "साइन इन करत आहे...",
+        loginSuccess: "यशस्वीरित्या साइन इन केले!",
+        loginError: "ईमेल किंवा पासवर्ड चुकीचा आहे."
+    },
+
+    bn: {
+        title: "অভিযোগ পোর্টাল",
+        signIn: "সাইন ইন",
+        register: "নিবন্ধন",
+        user: "ব্যবহারকারী",
+        admin: "অ্যাডমিন",
+        officer: "কর্মকর্তা",
+        language: "পছন্দের ভাষা",
+        email: "ইমেল",
+        password: "পাসওয়ার্ড",
+        forgot: "পাসওয়ার্ড ভুলে গেছেন?",
+        newUser: "নতুন ব্যবহারকারী?",
+        emailPlaceholder: "আপনার ইমেল লিখুন",
+        passwordPlaceholder: "আপনার পাসওয়ার্ড লিখুন",
+        success: "ভাষা সফলভাবে পরিবর্তন হয়েছে!",
+        signingIn: "সাইন ইন হচ্ছে...",
+        loginSuccess: "সফলভাবে সাইন ইন হয়েছে!",
+        loginError: "ইমেল বা পাসওয়ার্ড ভুল।"
+    },
+
+    gu: {
+        title: "ફરિયાદ પોર્ટલ",
+        signIn: "સાઇન ઇન",
+        register: "નોંધણી કરો",
+        user: "વપરાશકર્તા",
+        admin: "એડમિન",
+        officer: "અધિકારી",
+        language: "પસંદગીની ભાષા",
+        email: "ઇમેઇલ",
+        password: "પાસવર્ડ",
+        forgot: "પાસવર્ડ ભૂલી ગયા છો?",
+        newUser: "નવા વપરાશકર્તા?",
+        emailPlaceholder: "તમારો ઇમેઇલ દાખલ કરો",
+        passwordPlaceholder: "તમારો પાસવર્ડ દાખલ કરો",
+        success: "ભાષા સફળતાપૂર્વક બદલાઈ ગઈ!",
+        signingIn: "સાઇન ઇન થઈ રહ્યું છે...",
+        loginSuccess: "સફળતાપૂર્વક સાઇન ઇન થયું!",
+        loginError: "ઇમેઇલ અથવા પાસવર્ડ ખોટો છે."
+    },
+
+    ur: {
+        title: "شکایت پورٹل",
+        signIn: "سائن ان",
+        register: "رجسٹر کریں",
+        user: "صارف",
+        admin: "ایڈمن",
+        officer: "افسر",
+        language: "پسندیدہ زبان",
+        email: "ای میل",
+        password: "پاس ورڈ",
+        forgot: "پاس ورڈ بھول گئے؟",
+        newUser: "نئے صارف؟",
+        emailPlaceholder: "اپنا ای میل درج کریں",
+        passwordPlaceholder: "اپنا پاس ورڈ درج کریں",
+        success: "زبان کامیابی سے تبدیل ہو گئی!",
+        signingIn: "سائن ان ہو رہا ہے...",
+        loginSuccess: "کامیابی سے سائن ان ہو گیا!",
+        loginError: "ای میل یا پاس ورڈ غلط ہے۔"
+    }
+
+};
+
+// ROLE DEMO CREDENTIALS
+const demoAccounts = {
+    user: { email: "user@demo.in", password: "demo" },
+    admin: { email: "admin@demo.in", password: "demo" },
+    officer: { email: "officer@demo.in", password: "demo" }
+};
+
+const emailInput = document.getElementById("email");
+const passwordInput = document.getElementById("password");
+const messageEl = document.getElementById("message");
+const submitBtn = document.getElementById("submitBtn");
+
+// ROLE SWITCHING EVENT
+document.getElementById("rolesGroup").addEventListener("click", function(e) {
+    const btn = e.target.closest("button[data-role]");
+    if (!btn) return;
+
+    document.querySelectorAll("#rolesGroup button").forEach(b => b.classList.remove("selected"));
+    btn.classList.add("selected");
+
+    const role = btn.getAttribute("data-role");
+    if (demoAccounts[role]) {
+        emailInput.value = demoAccounts[role].email;
+        passwordInput.value = demoAccounts[role].password;
+    }
+    messageEl.innerText = "";
+});
+
+// LANGUAGE CHANGE FUNCTION
+function changeLanguage(lang) {
+    const selected = translations[lang] || translations.en;
+    document.documentElement.lang = lang;
+    document.documentElement.dir = (lang === 'ur') ? 'rtl' : 'ltr';
+
+    document.querySelectorAll("[data-i18n]").forEach(element => {
+        const key = element.getAttribute("data-i18n");
+        if (selected[key]) {
+            element.innerText = selected[key];
+        }
+    });
+
+    document.querySelectorAll("[data-placeholder]").forEach(element => {
+        const key = element.getAttribute("data-placeholder");
+        if (selected[key]) {
+            element.placeholder = selected[key];
+        }
+    });
+
+    localStorage.setItem("selectedLanguage", lang);
+    messageEl.className = "msg-success";
+    messageEl.innerText = selected.success;
+}
+
+// LANGUAGE DROPDOWN EVENT
+const languageDropdown = document.getElementById("language");
+languageDropdown.addEventListener("change", function() {
+    changeLanguage(this.value);
+});
+
+// LOAD SAVED LANGUAGE
+const savedLanguage = localStorage.getItem("selectedLanguage") || "en";
+languageDropdown.value = savedLanguage;
+changeLanguage(savedLanguage);
+
+// FORGOT PASSWORD / REGISTER DEMO HOOKS
+document.getElementById("forgotBtn").addEventListener("click", function() {
+    alert("Password reset OTP: 123456 (demo). Enter your email and use OTP to reset.");
+});
+function registerPrompt() {
+    alert("New citizen registration is enabled! Use demo accounts or register with demo OTP: 123456.");
+}
+document.getElementById("registerBtn").addEventListener("click", registerPrompt);
+document.getElementById("navRegister").addEventListener("click", registerPrompt);
+
+// CONNECT BACKEND AUTHENTICATION
+document.getElementById("loginForm").addEventListener("submit", async function(event) {
+    event.preventDefault();
+
+    const email = emailInput.value.trim();
+    const password = passwordInput.value;
+    const curLang = languageDropdown.value;
+    const t = translations[curLang] || translations.en;
+
+    submitBtn.disabled = true;
+    submitBtn.innerText = t.signingIn || "Signing in...";
+    messageEl.className = "";
+    messageEl.innerText = "";
+
+    try {
+        const res = await fetch("/api/auth/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, password })
+        });
+        const data = await res.json();
+
+        if (res.ok && data.success) {
+            messageEl.className = "msg-success";
+            messageEl.innerText = (t.loginSuccess || "Signed in successfully!") + ` [Logged in as ${data.user.name || data.role}]`;
+            
+            if (data.token) localStorage.setItem("authToken", data.token);
+            if (data.user) localStorage.setItem("currentUser", JSON.stringify(data.user));
+            if (data.role) localStorage.setItem("userRole", data.role);
+            
+            setTimeout(() => {
+                alert(`Welcome ${data.user.name || 'User'}! You have successfully signed in as ${data.role.toUpperCase()}.`);
+                submitBtn.disabled = false;
+                submitBtn.innerText = t.signIn;
+            }, 500);
+        } else {
+            messageEl.className = "msg-error";
+            messageEl.innerText = data.error || t.loginError || "Email or password is incorrect.";
+            submitBtn.disabled = false;
+            submitBtn.innerText = t.signIn;
+        }
+    } catch (err) {
+        // Fallback for static browser preview without backend
+        if (password === "demo") {
+            messageEl.className = "msg-success";
+            messageEl.innerText = "Signed in successfully (Demo Mode)!";
+            alert(`Signed in successfully with ${email}!`);
+        } else {
+            messageEl.className = "msg-error";
+            messageEl.innerText = "Failed to connect to authentication server. Please check backend.";
+        }
+        submitBtn.disabled = false;
+        submitBtn.innerText = t.signIn;
+    }
+});
+
+</script>
+
+</body>
+</html>
